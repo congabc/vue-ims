@@ -1,6 +1,6 @@
 <template>
-  <div class="home">
-    <h2>欢迎使用出入库管理系统</h2>
+  <div>
+    零食
   </div>
 </template>
 
@@ -18,7 +18,4 @@ export default {
 </script>
 
 <style scoped>
-div h2{
-  text-align: center;
-}
 </style>

@@ -8,7 +8,7 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false;
 
 // 权限拦截
-// import './permission'
+import './permission'
 new Vue({
   router,
   render: (h) => h(App),

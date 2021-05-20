@@ -195,14 +195,15 @@ export default {
 </script>
 
 <style scoped>
+
 .logo{
   vertical-align: middle;
     padding: 0px 10px 0 40px;
 }
 .text{
   color: #fff;
-  height: 62px;
-  line-height: 62px;
+  height: 50px;
+  line-height: 50px;
 }
 .el-dropdown-link {
   cursor: pointer;
@@ -221,8 +222,8 @@ padding-right: 10px;
 }
 .el-dropdown {
   float: right;
-  height: 61px;
-  line-height: 61px;
+  height: 50px;
+  line-height: 50px;
   margin-right: 40px;
 }
 </style>
