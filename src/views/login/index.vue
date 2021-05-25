@@ -46,9 +46,10 @@ export default {
       if (value === "") {
         callback(new Error("请输入用户名"));
       } else {
-        if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("username");
-        }
+        // 重复调用会报错："RangeError: Maximum call stack size exceeded"
+        // if (this.ruleForm.checkPass !== "") {
+        //   this.$refs.ruleForm.validateField("username");
+        // }
         callback();
       }
     };
@@ -67,17 +68,26 @@ export default {
         password: "",
       },
       rules: {
-        user: [{ validator: validateUser, trigger: "blur" }],
-        checkPass: [{ validator: validatePass, trigger: "blur" }],
+        username: [{ validator: validateUser, trigger: "blur" }],
+        password: [{ validator: validatePass, trigger: "blur" }],
       },
     };
   },
+  created(){
+            const _self = this;
+            document.onkeydown = function(e){
+                let key = window.event.keyCode;
+                if(key === 13){
+                    _self.submitForm();
+                }
+            }
+        },
   methods: {
     submitForm(formName) {
       
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          
+          console.log("1")
           login(this.ruleForm.username, this.ruleForm.password).then(
             (response) => {
               const resp = response.data;
@@ -88,11 +98,11 @@ export default {
                   let respUser = response.data;
                   
                   if (respUser.flag) {
-                    localStorage.setItem(
+                    sessionStorage.setItem(
                       "vue-ims-user",
                       JSON.stringify(respUser.data)
                     );
-                    localStorage.setItem("vue-ims-token", token);
+                    sessionStorage.setItem("vue-ims-token", token);
                     this.$router.push("/home");
                   } else {
                     this.$message({
@@ -116,7 +126,7 @@ export default {
       });
     },
     resetForm(formName) {
-      // this.$refs[formName].resetFields();
+      this.$refs[formName].resetFields();
       console.log(formName);
     },
   },

@@ -72,7 +72,7 @@ const routes = [
         {
           path: '/channel/wholesale',
           component: Wholesale,
-          meta: {title: '终端客户'}
+          meta: {title: '批发客户'}
         },
       ]
   },

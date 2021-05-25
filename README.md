@@ -146,3 +146,119 @@ login:
 
 注释掉就能正常运行。 问题解决
 
+## 第五天笔记
+
+发现登陆页面不输入账号密码也能登陆成功
+
+正则表达式还不是很熟悉
+
+遇到的问题：
+
+1. 同时使用表单验证和绑定数据，修改表单数据的时候数据没有同步到vue
+
+删除prop之后就能同步了，但是表单验证无效。
+
+解决： 
+
+通过监听表单绑定的值可以发现在表单提交之前双向绑定是生效的。submitData函数下所有数据删除重新写，发现能获取到值，
+
+原来的
+
+![1621736151129](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1621736151129.png)
+
+this.$refs[from].resetFields();问题出在这里表单重置了。 删除就好了。
+
+
+
+## 第六天笔记
+
+1. 删除数据表单不刷新：
+
+在CSDN中找到答案，每次更新的时候table插件不刷新，给需要更新的table绑定一个key，每次数据改变的时候刷新插件。每次删除的时候都改变一次key值
+
+https://blog.csdn.net/weixin_47641768/article/details/112987531?utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~aggregatepage~first_rank_v2~rank_aggregation-1-112987531.pc_agg_rank_aggregation&utm_term=element+ui+%E7%9A%84%E8%A1%A8%E6%A0%BC%E5%88%B7%E6%96%B0%E9%97%AE%E9%A2%98&spm=1000.2123.3001.4430
+
+删除数据更新之后，主表单的数据不更新
+
+2. 通过elementui自带的字表合计无法吧值赋值给父表,无法选择要合计的列需要自定义
+
+show-summary表单合计
+
+:summary-method="getchildrenTotal"定义表单合计逻辑
+
+```
+// 合计计算总数函数逻辑
+totalCount(sums,values,index){
+      sums[index] = values.reduce((prev, curr) => {
+        const value = Number(curr);
+        if (!isNaN(value)) {
+          return prev + curr;
+        } else {
+          return prev;
+        }
+      }, 0);
+    },
+```
+
+单独提取出来方便选择需要合计的列
+
+```
+// 计算总数返回结果
+    getTotal(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+        sums[index] = '合计';
+        return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        switch (column.property){
+          case 'gross':
+            this.totalCount(sums,values,index)
+          break;
+          case 'money':
+            this.totalCount(sums,values,index)
+          break;
+          case 'money1':
+            this.totalCount(sums,values,index)
+          break;
+          case 'money2':
+            this.totalCount(sums,values,index)
+          break;
+          default:
+            break
+        }
+      });
+      return sums;
+```
+
+### 供应商管理实现功能
+
+1. 点击单条数据显示订单数量
+
+![1621904879013](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1621904879013.png)
+
+样式处理不够，逻辑做完在整体处理样式
+
+2. 添加订单功能
+
+   添加订单会在当前客户数据下的子表单显示，并且重新计算进货总量，应付金额，实付金额是客户输入的。如果输入的价格和计算的价格不符，该条数据会警告，会显示待付金额
+
+![1621905133797](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\1621905133797.png)
+
+3. 搜索功能
+
+   支持模糊搜索，点击搜索之后清空搜索条件
+
+4. 删除订单功能
+
+   删除订单之后客户信息中的进货总量和应付金额会实时更新，**待付金额还没调整好**，
+
+5. 待付金额有值变色
+
+   新增的数据会实时计算，如果出现付款不足当前客户信息会警告变色
+
+6. 支持新增客户
+
+   新增客户下订单功能正常

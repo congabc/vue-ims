@@ -110,8 +110,8 @@ export default {
       }
     };
     return {
-      user: localStorage.getItem("vue-ims-user"),
-      token: localStorage.getItem("vue-ims-token"),
+      user: sessionStorage.getItem("vue-ims-user"),
+      token: sessionStorage.getItem("vue-ims-token"),
       activeIndex: "1",
       activeIndex2: "1",
       dialogFormVisible: false,

@@ -48,26 +48,26 @@
         >新 增</el-button>
       </el-form-item>
     </el-form>
-    <!-- 弹出框 -->
+    <!-- 添加用户信息弹出框 -->
     <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
   <el-form :model="formList" ref="formList" :rules="rules">
-    <el-form-item label="店名" :label-width="formLabelWidth" prop="store">
+    <el-form-item label="店名" :label-width="formLabelWidth" >
       <el-input v-model="formList.store" autocomplete="off" style="width:300px"></el-input>
     </el-form-item>
-    <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
+    <el-form-item label="姓名" :label-width="formLabelWidth" >
       <el-input v-model="formList.name" autocomplete="off" style="width:300px"></el-input>
     </el-form-item>
-    <el-form-item label="电话号码" :label-width="formLabelWidth" prop="phone">
+    <el-form-item label="电话号码" :label-width="formLabelWidth" >
       <el-input v-model="formList.phone" autocomplete="off" style="width:300px"></el-input>
     </el-form-item>
-    <el-form-item label="地址" :label-width="formLabelWidth" prop="address">
+    <el-form-item label="地址" :label-width="formLabelWidth" >
       <el-input v-model="formList.address" autocomplete="off" style="width:300px"></el-input>
     </el-form-item>
-    <el-form-item label="进货数量" :label-width="formLabelWidth" prop="gross">
+    <el-form-item label="进货数量" :label-width="formLabelWidth" >
       <el-input placeholder=0 v-model="formList.gross" autocomplete="off" style="width:300px"></el-input>
       <el-button v-if="istrue" type="primary" @click="examineData('formList')">查看</el-button>
     </el-form-item>
-    <el-form-item label="进货金额" :label-width="formLabelWidth" prop="money">
+    <el-form-item label="进货金额" :label-width="formLabelWidth" >
       <el-input  placeholder=0 v-model="formList.money" autocomplete="off" style="width:300px"></el-input>
     </el-form-item>
   </el-form>
@@ -87,7 +87,7 @@
       <el-table
         :data="list" 
         style="width: 100%"
-        
+        :row-class-name="tableRowClassName"
         max-height="600">
         <el-table-column prop="store" label="店名" width="150">
         </el-table-column>
@@ -103,6 +103,8 @@
             </el-table-column>
             <el-table-column prop="money" label="进货金额" min-width="100">
             </el-table-column>
+        <el-table-column  prop="money1" label="实收金额" min-width="100"></el-table-column>
+
           </el-table-column>
         </el-table-column>
         <el-table-column label="操作" width="150">
@@ -193,8 +195,40 @@ export default {
   created() {
     // 初始化获取列表数据
     this.fetchData();
+    
   },
+    watch: {
+        arr1: function (newVal, oldVal) {
+      console.log(newVal);
+      // 处理实收金额
+      let arr1 = [];
+      newVal.filter((item) => {
+        item.money = item.gross * 20;
+        let probability = Math.random().toFixed(3);
+        if (probability >= 0.1) {
+          item.money1 = item.money;
+        } else {
+          let percentage = Number(probability) + 0.8;
+          item.money1 = parseInt(item.money * percentage);
+        }
+        arr1.push(item);
+      });
+      // console.log(arr1)
+      // 处理应收金额
+      this.list=arr1
+      
+    },
+  },
+
   methods: {
+    // 收款不全警告
+     tableRowClassName({row, rowIndex}) {
+        if(row.money != row.money1){
+          return 'warning-row';
+        }
+        return '';
+      },
+    
     handleDelete(index,row){
       this.fetchData(this.total)
     },
@@ -221,7 +255,9 @@ export default {
       
      this.$refs[from].validate(valid => {
        this.list.pop()
-       console.log(this.formList)
+       this.formList.gross=0
+       this.formList.money=0
+       this.formList.money1=0
        this.list.push(this.formList)
         this.dialogFormVisible=false
         this.$refs[from].resetFields();
@@ -262,15 +298,7 @@ export default {
         const resp = response.data;
         if (resp.flag) {
           _this.list= _this.arr1= resp.data;
-          if(_this.total == ''){
-            _this.total =Number(resp.total)
-          }
-          _this.currentPage =Number(resp.page)
-          _this.pageSize =Number(resp.size)
-          console.log(resp.total)
-          if(_this.currentPage-1>_this.total/10){
-            _this.total=(_this.currentPage-1)*10+1
-          }
+          
         }
       }
     },

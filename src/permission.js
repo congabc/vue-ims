@@ -13,7 +13,7 @@
 
  router.beforeEach((to, from , next) => {
     // 1. 获取token
-    const token = localStorage.getItem("vue-ims-token")
+    const token = sessionStorage.getItem("vue-ims-token")
     console.log('token', token)
     
     if(!token) {
@@ -32,7 +32,7 @@
             next()
         }else {
             // 1.2.2 请求路由非登录页面，先在本地查看是否有用户信息，
-            const userInfo = localStorage.getItem("vue-ims-user")
+            const userInfo = sessionStorage.getItem("vue-ims-user")
             if(userInfo) {
                 // 本地获取到，则直接让它去目标路由
                 next()
@@ -43,7 +43,7 @@
                     if(resp.flag) {
                         // 如果获取到用户信息，则进行非登录页面，否则回到登录页面
                         // 保存到本地
-                        localStorage.setItem("vue-ims-user", JSON.stringify(resp.data))
+                        sessionStorage.setItem("vue-ims-user", JSON.stringify(resp.data))
                         next()
                     }else {
                         // 未获取到用户信息，重新登录 
