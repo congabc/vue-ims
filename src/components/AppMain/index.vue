@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <el-breadcrumb  separator="/">
-      <el-breadcrumb-item class="link" :to="{ path: $route.pach }">{{$route.meta.title}}</el-breadcrumb-item>
+    <el-breadcrumb  separator="/" v-show="$route.path !== '/home'">
+      <el-breadcrumb-item  class="link" :to="{ path: $route.pach }">{{$route.meta.title}}</el-breadcrumb-item>
     </el-breadcrumb>
     <router-view></router-view>
   </div>

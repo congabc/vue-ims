@@ -15,10 +15,17 @@ import Milk from '../views/supplier/milk'
 import Repertory from '../views/repertory'
 import Motorman from '../views/staff/motorman'
 import Salesman from '../views/staff/salesman'
-// import Home from "../views/home/index.vue"
+import bucunzai from "../views/404.vue"
 Vue.use(VueRouter);
+// 解决Vue-Router升级导致的Uncaught(in promise) navigation guard问题
+
 
 const routes = [
+  {
+    path: "/404",
+    name: "Layout",
+    component: bucunzai,
+  },
   {
     path: "/",
     name: "Layout",
@@ -124,7 +131,9 @@ const routes = [
         {
           path: '/supplier/clearwater',
           component: Clearwater,
-          meta: {title: '纯水类'}
+          meta: {
+            title: 'permission', icon: 'el-icon-menu', roles: ['admin']
+          },
         },
       ]
   },
@@ -158,25 +167,26 @@ const routes = [
     path: "/repertory",
     name: "Layout",
     component: Layout,
-    redirect: '/',
-      children: [
-        {
-          path: '/repertory',
-          component: Repertory,
-          meta: {title: '库存'}
-        },
-      ]
+    redirect: '/repertory',
+    children: [
+      {
+        path: '/repertory',
+        component: Repertory,
+        meta: {title: '库存',roles: ['admin']}
+      },
+    ]
   },
   {
     path: "/staff",
     name: "Layout",
     component: Layout,
     redirect: '/',
+    meta: {requireAuth: false,roles: ['admin']},
       children: [
         {
           path: '/staff/motorman',
           component: Motorman,
-          meta: {title: '司机'}
+          meta: {title: '司机',roles: ['admin']}
         },
       ]
   },
@@ -189,7 +199,7 @@ const routes = [
         {
           path: '/staff/salesman',
           component: Salesman,
-          meta: {title: '业务员'}
+          meta: {title: '业务员',roles: ['admin']}
         },
       ]
   },
@@ -201,5 +211,6 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
+
 
 export default router;

@@ -39,6 +39,13 @@
 
 
 <script>
+/*
+登录逻辑
+1 用户输入表单验证
+2 验证通过提交表单，后台验证数据，验证通过返回对应的用户信息，刷新令牌，访问令牌，权限
+3 返回的3种信息存储到cookie中，每次请求时候会验证访问令牌是否拥有权限，是否过期
+4 完成登录进行跳转，动态生成路由
+ */
 import { login, getUserInfo } from "@/api/login";
 export default {
   data() {
@@ -87,41 +94,18 @@ export default {
       
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log("1")
-          login(this.ruleForm.username, this.ruleForm.password).then(
-            (response) => {
-              const resp = response.data;
-              const token = resp.data.token;
-              console.log(token);
-              if (resp.flag) {
-                getUserInfo(token).then((response) => {
-                  let respUser = response.data;
-                  
-                  if (respUser.flag) {
-                    sessionStorage.setItem(
-                      "vue-ims-user",
-                      JSON.stringify(respUser.data)
-                    );
-                    sessionStorage.setItem("vue-ims-token", token);
-                    this.$router.push("/home");
-                  } else {
-                    this.$message({
-                      message: respUser.message,
-                      type: "warning",
-                    });
-                  }
-                });
-              } else {
-                this.$message({
-                  message: respUser.message,
-                  type: "warning",
-                });
-              }
+          this.$store.dispatch('UserLogin', this.ruleForm).then((response) => {
+            const {code ,message} =response
+            if(code===200){
+              this.$message({
+                showClose: true,
+                message: message,
+                type: 'success'
+              });
+              this.$router.push("/home");
+              
             }
-          );
-        } else {
-          console.log("验证失败");
-          return false;
+          })
         }
       });
     },

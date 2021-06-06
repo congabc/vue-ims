@@ -24,7 +24,7 @@ export function pagingList20(page, size, formInline) {
 }
 export function purchaseList(id ) {
     return request({
-        url: `/supplier/drinks/purchaseList?page=${id}`,
+        url: `/supplier/drinks/purchaseList?id=${id}`,
         method: 'get',
     })
 }

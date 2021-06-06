@@ -86,12 +86,11 @@ export default {
   data() {
     const validateOldPass = (rule, value, callback) => {
       checkPwd(this.user.id, value).then((response) => {
-        const resp = response.data;
-        if (resp.flag) {
+        if (response.flag) {
           // 验证通过
           callback();
         } else {
-          callback(new Error(resp.message));
+          callback(new Error(response.message));
         }
       });
     };
@@ -164,11 +163,11 @@ export default {
         if (valid) {
           updatePwd(this.user.id, this.form.newPassword).then((response) => {
             this.$message({
-              message: response.data.message,
+              message: response.message,
               //    type: resp.falg ? 'succcess': 'warning'
-              type: response.data.flag ? "succcess" : "warning",
+              type: response.flag ? "success" : "warning",
             });
-            if (response.data.flag) {
+            if (response.flag) {
               this.handleLogout();
               this.dialogFormVisible = false;
             }
@@ -181,14 +180,17 @@ export default {
       this.$refs[formName].resetFields();
     },
     handleLogout() {
-      logout(this.token).then((response) => {
-        const resp = response.data;
-        if (resp.flag) {
-          localStorage.removeItem("vue-ims-user"),
-            localStorage.removeItem("vue-ims-token");
-          this.$router.push("/login");
+      this.$store.dispatch('UserLogout').then(response=>{
+        console.log(response)
+        if(response.flag){
+          this.$message({
+            showClose:true,
+            message:response.message,
+            type:'success'
+          })
+          this.$router.push('/login')
         }
-      });
+      })
     },
   },
 };

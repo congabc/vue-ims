@@ -10,13 +10,14 @@
 
  import router from './router'
  import {getUserInfo} from './api/login'
+ import { PcCookie, Key } from '@/utils/cookie'
 
  router.beforeEach((to, from , next) => {
     // 1. 获取token
-    const token = sessionStorage.getItem("vue-ims-token")
-    console.log('token', token)
+    const hasToken = PcCookie.get(Key.accessTokenKey)
+    console.log('token', hasToken)
     
-    if(!token) {
+    if(!hasToken) {
         // 1.1 如果没有获取到，
         // 要访问非登录页面，则不让访问，加到登录页面 /login
         if(to.path !== '/login') {
@@ -32,24 +33,26 @@
             next()
         }else {
             // 1.2.2 请求路由非登录页面，先在本地查看是否有用户信息，
-            const userInfo = sessionStorage.getItem("vue-ims-user")
+            const userInfo = JSON.parse(PcCookie.get(Key.userInfoKey))
             if(userInfo) {
-                // 本地获取到，则直接让它去目标路由
-                next()
-            }else {
-                // 如果本地没有用户信息， 就通过token去获取用户信息，
-                getUserInfo(token).then(response => {
-                    const resp = response.data
-                    if(resp.flag) {
-                        // 如果获取到用户信息，则进行非登录页面，否则回到登录页面
-                        // 保存到本地
-                        sessionStorage.setItem("vue-ims-user", JSON.stringify(resp.data))
+                // 查询权限信息
+                console.log(userInfo.role)
+                if(to.meta.roles){
+                    if(to.meta.roles.includes(userInfo.role)){
                         next()
-                    }else {
-                        // 未获取到用户信息，重新登录 
-                        next({path: '/login'})
+                    }else{
+                        window.location.href='http://localhost:8081/404'
                     }
-                })
+                }else{
+                    // 本地获取到，则直接让它去目标路由
+                    console.log(321)
+                    next()
+                }
+                
+                
+            }else {
+                // 如果本地没有用户信息， 就跳转到登录页面
+                next({path: '/login'})
             }
             
         }

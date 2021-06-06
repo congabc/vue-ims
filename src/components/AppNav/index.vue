@@ -54,19 +54,19 @@
             <i class="el-icon-s-check"></i>奶制品</el-menu-item
           >
         </el-submenu>
-        <el-menu-item index="/repertory">
+        <el-menu-item index="/repertory" v-if="$store.state.iftrue==='admin'">
           <i class="el-icon-s-custom"></i>
           <span slot="title">库 存</span>
         </el-menu-item>
-        <el-submenu index="/staff">
-          <template slot="title">
+        <el-submenu index="/staff" v-if="$store.state.iftrue==='admin'">
+          <template slot="title" >
             <i class="el-icon-location"></i>
             <span>员工管理</span>
           </template>
-          <el-menu-item index="/staff/motorman">
+          <el-menu-item index="/staff/motorman" >
             <i class="el-icon-s-check"></i> 司机</el-menu-item
           >
-          <el-menu-item index="/staff/salesman">
+          <el-menu-item index="/staff/salesman" >
             <i class="el-icon-s-check"></i>业务员</el-menu-item
           >
         </el-submenu>
@@ -76,7 +76,12 @@
 </template>
 
 <script>
+ import { PcCookie, Key } from '@/utils/cookie'
 export default {
+  
+  created(){
+    console.log(this.$store.state.iftrue)
+  },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);

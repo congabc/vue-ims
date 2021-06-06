@@ -29,3 +29,16 @@ export function pagingList50(page, size, formInline) {
         data: formInline
     })
 }
+export function fenpei(data) {
+    return request({
+        url: `/supplier/terminal/fenpei`,
+        method: 'post',
+        data:data
+    })
+}
+export function examine(id) {
+    return request({
+        url: `/supplier/terminal/examine?id=${id}`,
+        method: 'get',
+    })
+}

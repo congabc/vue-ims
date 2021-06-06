@@ -22,7 +22,7 @@
         <el-button  type="primary"  icon="el-icon-refresh-right"  @click="resetForm('formInline')"  >重 置</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onAdd('formInline')">
+        <el-button type="primary" @click="onAdd('formInline')" :disabled="$store.state.iftrue==='admin'?false:true">
           <i class="el-icon-upload el-icon--right"></i>
           <span>新 增</span> 
         </el-button>
@@ -116,6 +116,7 @@
                   size="mini"
                   type="danger"
                   @click="childrenHandleDelete(scope.$index, scope.row)"
+                  :disabled="$store.state.iftrue==='admin'?false:true"
                   >删除</el-button>
               </template>
             </el-table-column>
@@ -138,7 +139,7 @@
       <el-table-column label="操作" width="180">
         <template slot-scope="scope">
           <el-button  type="primary"  size="mini"  @click="handleEdit(scope.$index, scope.row)" >添加订单</el-button>
-          <el-button  size="mini"  type="danger"  @click="handleDelete(scope.$index, scope.row)"  >删除</el-button>
+          <el-button  size="mini"  type="danger"  @click="handleDelete(scope.$index, scope.row)" :disabled="$store.state.iftrue==='admin'?false:true" >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -418,16 +419,16 @@ export default {
       if(this.pageSize==10){
         // 接口获取客户信息
         pagingList10(this.currentPage,this.pageSize,this.formInline).then((response) => {
-          let resp = response.data
+         
           // 赋值list，分页处理
-          this.getlist(resp)
+          this.getlist(response)
           // 通过请求的数据，获取每个客户的订单，并处理总进货量，应付金额，实付金额，待付金额
           this.setList()
         });
       }else {
         pagingList20(this.currentPage,this.pageSize,this.formInline).then((response) => {
-          let resp=response.data
-          this.getlist(resp)
+          
+          this.getlist(response)
           this.setList()
         });
       }
@@ -439,17 +440,16 @@ export default {
         let id =item.id
         // 接口获取客户订单信息
         purchaseList(id).then((response)=>{
-          let resp = response.data
-          if(resp.flag){
+          if(response.flag){
             // 遍历每个客户的订单
-            resp.data.map(item => {
+            response.data.map(item => {
               // 获取单笔订单金额price单价address进货数量
               item.money=item.price*item.address
               // 保存id
               item.userId=id
             });
             // 获取进货金额总数
-            var total1 = this. getTotalData(item,resp,"money")
+            var total1 = this. getTotalData(item,response,"money")
             item.money =total1
             // 通过金额总数来生成随机实际付款数 概率9:1欠款
             let probability = Math.random().toFixed(3);
@@ -464,9 +464,9 @@ export default {
             if(item.money2==0){
               item.money2=null
             }
-            item.data=resp.data
+            item.data=response.data
             // 获取单个店面总进货数
-            var total = this.getTotalData(item.id,resp,"address")
+            var total = this.getTotalData(item.id,response,"address")
             item.gross=total
           }
         })
